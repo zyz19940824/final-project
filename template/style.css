@@ -1,0 +1,12 @@
+/* style.css */
+/* Feel free to change these if you want. */
+
+body {
+  font-family: sans-serif;
+}
+
+header,
+main {
+  max-width: 960px;
+	margin: 0 auto;
+}
