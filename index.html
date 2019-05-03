@@ -17,7 +17,7 @@
     <h1>Miami Dade Demographic</h1>
     <h3>Made by Yaozhi Zhang</h3>
   </header>
-
+  <script src="js/d3.min.js"></script>
 
   <main>
     <section>
@@ -38,11 +38,11 @@
 
     <section id="linechart">
 
-<script src="js/d3.min.js"></script>
-      <script>
-        d3.csv("data/pop_1840-2010.csv").then(function(data) {
 
-          data.forEach(function(d) {
+      <script>
+        d3.csv("data/pop_1840-2010.csv").then(function(data1) {
+
+          data1.forEach(function(d) {
 
             d.Population = +d.Population;
           });
@@ -63,14 +63,14 @@
             .attr("height", h);
 
           var xScale = d3.scaleLinear()
-            .domain(d3.extent(data, function(d) {
+            .domain(d3.extent(data1, function(d) {
               return d.Year
             }))
             .range([0, (w - margin.left - margin.right - 50)]);
 
 
           var yScale = d3.scaleLinear()
-            .domain(d3.extent(data, function(d) {
+            .domain(d3.extent(data1, function(d) {
               return d.Population
             }))
             .range([(h - margin.top - margin.bottom), 0])
@@ -88,12 +88,12 @@
           svg.append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
             .append("path")
-            .datum(data)
+            .datum(data1)
             .attr("class", "data-line")
             .attr("d", line);
 
           var plots = svg.selectAll("circle")
-            .data(data)
+            .data(data1)
             .enter()
             .append("circle")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
@@ -163,7 +163,7 @@
 
 
     <section id="barchart">
-<script src="js/d3.min.js"></script>
+
       <script>
         var w = 1000;
         var h = 800;
@@ -176,11 +176,11 @@
         };
 
 
-        d3.csv("data/Place_Pop_2010.csv").then(function(data) {
+        d3.csv("data/Place_Pop_2010.csv").then(function(data2) {
 
           var name = [];
 
-          data.forEach(function(d) {
+          data2.forEach(function(d) {
             name.push(d.NAME10);
           })
           var svg = d3.select("body").append("svg");
@@ -191,7 +191,7 @@
 
 
           var yScale = d3.scaleLinear()
-            .domain(d3.range(data, function(d) {
+            .domain(d3.range(data2, function(d) {
               return d.OTHERNH
             }))
             .range([(h - margin.top - margin.bottom), 0]);
@@ -201,7 +201,7 @@
             .attr("height", h);
 
           svg.selectAll("rect")
-            .data(data)
+            .data(data2)
             .enter()
             .append("rect")
             .attr("width", 10)
@@ -255,7 +255,6 @@
     </section>
 
     <section id="map">
-      <script src="js/d3.min.js"></script>
       <script>
         var width = 1000;
         var height = 600;
@@ -276,7 +275,7 @@
           .attr("tranform", "translate(0" + margin.left + "," + margin.top + ")");
 
         d3.json("data/pop2010.json").then(function(miami) {
-          d3.csv("data/Place_Pop_2010.csv").then(function(data) {
+          d3.csv("data/Place_Pop_2010.csv").then(function(data3) {
 
 
             var miamiFeatures = miami.features
