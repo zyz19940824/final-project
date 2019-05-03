@@ -40,226 +40,156 @@
 
       <script>
 
-      var w = 1000;
-      var h = 600;
+        d3.csv("data/pop.csv").then(function(data) {
 
 
-      var margin = {
-        top: 60,
-        right: 80,
-        bottom: 60,
-        left: 60
-      };
-
-        d3.csv("data/pop_1840-2010.csv").then(function(data1) {
-
-          data1.forEach(function(d) {
-
+          // Convert date to Date(), unrate to number
+          data.forEach(function(d) {
+            // d.Year = timeParser(d.Year);
             d.Population = +d.Population;
           });
 
+          // SVG properties...
 
+          // Set up width, height
+          var w = 1000,
+              h = 600;
+
+
+          // Set up margins
+          var margin = {
+            top: 60,
+            right: 60,
+            bottom: 60,
+            left: 60
+          };
+
+
+          // Create the SVG
           var svg = d3.select("body").append("svg");
 
+
+          // Add width, height attributes to SVG
           svg.attr("width", w - margin.right)
-            .attr("height", h);
+             .attr("height", h);
 
+
+
+
+          // Scales...
+
+          // Create the x scale (based on time!)
           var xScale = d3.scaleLinear()
-            .domain(d3.extent(data1, function(d) {
-              return d.Year
-            }))
-            .range([0, (w - margin.left - margin.right - 50)]);
+            .domain(d3.extent(data, function(d) { return d.Year } ))
+            .range([0, (w - margin.left - margin.right -50)]);
 
 
+          // Create the y scale (based on rate)
           var yScale = d3.scaleLinear()
-            .domain(d3.extent(data1, function(d) {
-              return d.Population
-            }))
-            .range([(h - margin.top - margin.bottom), 0])
+            .domain(d3.extent(data, function(d) { return d.Population }))
+            .range([(h - margin.top - margin.bottom ), 0])
 
 
           var line = d3.line()
-            .x(function(d) {
-              return xScale(d.Year);
-            })
-            .y(function(d) {
-              return yScale(d.Population);
-            });
+            .x(function(d) { return xScale(d.Year); } )
+            .y(function(d) { return yScale(d.Population); } );
 
 
           svg.append("g")
-            .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-            .append("path")
-            .datum(data1)
-            .attr("class", "data-line")
-            .attr("d", line);
+             .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+             .append("path")
+             .datum(data)
+             .attr("class", "data-line")
+             .attr("d", line);
 
-          var plots = svg.selectAll("circle")
-            .data(data1)
-            .enter()
-            .append("circle")
-            .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-            .attr("opacity", "1")
-            .attr("cx", function(d) {
-              return xScale(d.Year)
-            })
-            .attr("cy", function(d) {
-              return yScale(d.Population)
-            })
-            .attr("r", "4")
-            .on("mouseover", function(d) {
-              d3.select(".tooltip").classed("hidden", false);
+             var plots = svg.selectAll("circle")
+               .data(data)
+               .enter()
+               .append("circle")
+               .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+               .attr("opacity", "1")
+               .attr("cx", function(d) {
+                 return xScale(d.Year)
+               })
+               .attr("cy", function(d) {
+                 return yScale(d.Population)
+               })
+               .attr("r", "4")
+               .on("mouseover", function(d) {
+                 d3.select(".tooltip").classed("hidden", false);
 
-            })
-            .on("mousemove", function(d) {
-              var currentX = d3.event.pageX + 10;
-              var currentY = d3.event.pageY + 10;
-              d3.select(".tooltip")
-                .style("left", currentX + "px")
-                .style("top", currentY + "px")
 
-                .html("<p> Year: " + d.Year + "</br>" + "Population: " + d.Population + "</br>")
-            })
-            .on("mouseout", function(d) {
+               })
+               .on("mousemove", function(d) {
+                 var currentX = d3.event.pageX + 10;
+                 var currentY = d3.event.pageY + 10;
+                 d3.select(".tooltip")
+                   .style("left", currentX + "px")
+                   .style("top", currentY + "px")
 
-              d3.select(".tooltip").classed("hidden", true);
-            });
+                   .html("<p> Year: " + d.Year + "</br>" + "Population: " + d.Population + "</br>"
+                 )})
+                   .on("mouseout", function(d) {
 
-          svg.append("text")
-            .attr("x", 0 + 10)
-            .attr("y", 50)
-            .text("Population");
+                     d3.select(".tooltip").classed("hidden", true);
+                   });
 
-          svg.append("text")
-            .attr("x", w - 100)
-            .attr("y", h - 50)
-            .text("Year");
+  svg.append("text")
+     .attr("x", 0+ 10)
+     .attr("y", 50)
+     .text("Population");
 
+     svg.append("text")
+        .attr("x", w -100)
+        .attr("y", h - 50)
+        .text("Year");
+
+
+
+          // Axes...
+
+          // Create the x axis
           var xAxis = d3.axisBottom()
             .scale(xScale)
             .ticks(10);
 
+
+          // Create the y axis
           var yAxis = d3.axisLeft()
             .scale(yScale)
             .ticks(10)
-            .tickFormat(function(d) {
-              if ((d / 1000) >= 1) {
-                d = d / 1000 + "K";
-              }
-              return d;
-            });
+            .tickFormat(function (d) {
+        if ((d / 1000) >= 1) {
+          d = d / 1000 + "K";
+        }
+        return d;
+      });
 
+
+          // Append the x axis
           svg.append("g")
             .attr("transform", "translate(" + margin.left + "," + (h - margin.bottom) + ")")
             .attr("class", "xaxis")
             .call(xAxis);
 
+
+          // Append the y axis
           svg.append("g")
-            .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-            .attr("class", "yaxis")
-            .call(yAxis);
+             .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+             .attr("class", "yaxis")
+             .call(yAxis);
+
+
+
+
 
         });
-      </script>
 
+      </script>
     </section>
 
 
-    <!-- <section id="barchart">
-
-      <script>
-
-      var w = 1000;
-      var h = 600;
-
-
-      var margin = {
-        top: 60,
-        right: 80,
-        bottom: 60,
-        left: 60
-      };
-
-
-        d3.csv("data/Place_Pop_2010.csv").then(function(data2) {
-
-          var name = [];
-
-          data2.forEach(function(d) {
-            name.push(d.NAME10);
-          })
-          var svg = d3.select("body").append("svg");
-
-          var xScale = d3.scaleOrdinal()
-            .domain(name)
-            .range([0, w]);
-
-
-          var yScale = d3.scaleLinear()
-            .domain(d3.range(data2, function(d) {
-              return d.OTHERNH
-            }))
-            .range([(h - margin.top - margin.bottom), 0]);
-
-
-          svg.attr("width", w)
-            .attr("height", h);
-
-          svg.selectAll("rect")
-            .data(data2)
-            .enter()
-            .append("rect")
-            .attr("width", 10)
-            .attr("height", function(d) {
-              return d.OTHERNH;
-            })
-            .style("stroke", "black")
-            .attr("x", function(d, i) {
-              return (i * 12) + 50;
-            })
-            .attr("y", function(d) {
-              return h - d.OTHERNH;
-            })
-            // console.log(d.w);
-            .on("mouseover", function(d) {
-              d3.select(".tooltip").classed("hidden", false);
-
-
-            })
-            .on("mousemove", function(d) {
-              var currentX = d3.event.pageX + 10;
-              var currentY = d3.event.pageY + 10;
-              d3.select(".tooltip")
-                .style("left", currentX + "px")
-                .style("top", currentY + "px")
-
-                .html(function() {
-
-                  return "<p> County Name: " + d.NAME10 + "<br/>" + "Other race in 2010: " + d.OTHERNH;
-                })
-
-            })
-            .on("mouseout", function(d) {
-
-              d3.select(".tooltip").classed("hidden", true);
-            });
-
-          // svg.append("text")
-          //   .attr("x", 0 + 10)
-          //   .attr("y", 200)
-          //    // .attr("transform", "rotate(90)")
-          //   .text("Population");
-
-          svg.append("text")
-            .attr("x", w - 80)
-            .attr("y", h - 2)
-            .text("county");
-
-        });
-      </script>
-    </section> -->
-
-    <!-- <section id="map">
+    <section id="map">
       <script>
         var width = 1000;
         var height = 600;
@@ -356,7 +286,7 @@
 
         });
       </script>
-    </section> -->
+    </section>
 
   </main>
 </body>
