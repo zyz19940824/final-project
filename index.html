@@ -38,7 +38,6 @@
 
     <section id="linechart">
 
-
       <script>
         d3.csv("data/pop_1840-2010.csv").then(function(data1) {
 
@@ -47,12 +46,13 @@
             d.Population = +d.Population;
           });
 
-          var w = 1000,
-            h = 600;
+          var w = 1000;
+          var h = 600;
+
 
           var margin = {
             top: 60,
-            right: 60,
+            right: 80,
             bottom: 60,
             left: 60
           };
@@ -165,15 +165,17 @@
     <section id="barchart">
 
       <script>
-        var w = 1000;
-        var h = 800;
 
-        var margin = {
-          top: 20,
-          right: 20,
-          bottom: 30,
-          left: 50
-        };
+      var w = 1000;
+      var h = 600;
+
+
+      var margin = {
+        top: 60,
+        right: 80,
+        bottom: 60,
+        left: 60
+      };
 
 
         d3.csv("data/Place_Pop_2010.csv").then(function(data2) {
