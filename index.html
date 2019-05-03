@@ -17,7 +17,7 @@
     <h1>Miami Dade Demographic</h1>
     <h3>Made by Yaozhi Zhang</h3>
   </header>
-<script src="https://d3js.org/d3.v5.min.js"></script>
+  <script src="js/d3.min.js"></script>
 
   <main>
     <section>
@@ -36,13 +36,11 @@
       </ol>
     </section>
 
-    <section id="charts">
+    <section id="linechart">
+
 
       <script>
         d3.csv("data/pop_1840-2010.csv").then(function(data1) {
-          d3.json("data/pop2010.json").then(function(miami) {
-            d3.csv("data/Place_Pop_2010.csv").then(function(data3) {
-                      d3.csv("data/Place_Pop_2010.csv").then(function(data2) {
 
           data1.forEach(function(d) {
 
@@ -59,9 +57,9 @@
             left: 60
           };
 
-          var svg1 = d3.select("body").append("svg");
+          var svg = d3.select("body").append("svg");
 
-          svg1.attr("width", w - margin.right)
+          svg.attr("width", w - margin.right)
             .attr("height", h);
 
           var xScale = d3.scaleLinear()
@@ -87,14 +85,14 @@
             });
 
 
-          svg1.append("g")
+          svg.append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
             .append("path")
             .datum(data1)
             .attr("class", "data-line")
             .attr("d", line);
 
-          var plots = svg1.selectAll("circle")
+          var plots = svg.selectAll("circle")
             .data(data1)
             .enter()
             .append("circle")
@@ -125,12 +123,12 @@
               d3.select(".tooltip").classed("hidden", true);
             });
 
-          svg1.append("text")
+          svg.append("text")
             .attr("x", 0 + 10)
             .attr("y", 50)
             .text("Population");
 
-          svg1.append("text")
+          svg.append("text")
             .attr("x", w - 100)
             .attr("y", h - 50)
             .text("Year");
@@ -149,25 +147,43 @@
               return d;
             });
 
-          svg1.append("g")
+          svg.append("g")
             .attr("transform", "translate(" + margin.left + "," + (h - margin.bottom) + ")")
             .attr("class", "xaxis")
             .call(xAxis);
 
-          svg1.append("g")
+          svg.append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
             .attr("class", "yaxis")
             .call(yAxis);
 
+        });
+      </script>
+    </section>
 
 
+    <section id="barchart">
+
+      <script>
+        var w = 1000;
+        var h = 800;
+
+        var margin = {
+          top: 20,
+          right: 20,
+          bottom: 30,
+          left: 50
+        };
+
+
+        d3.csv("data/Place_Pop_2010.csv").then(function(data2) {
 
           var name = [];
 
           data2.forEach(function(d) {
             name.push(d.NAME10);
           })
-          var svg2 = d3.select("body").append("svg");
+          var svg = d3.select("body").append("svg");
 
           var xScale = d3.scaleOrdinal()
             .domain(name)
@@ -181,10 +197,10 @@
             .range([(h - margin.top - margin.bottom), 0]);
 
 
-          svg2.attr("width", w)
+          svg.attr("width", w)
             .attr("height", h);
 
-          svg2.selectAll("rect")
+          svg.selectAll("rect")
             .data(data2)
             .enter()
             .append("rect")
@@ -229,22 +245,37 @@
           //    // .attr("transform", "rotate(90)")
           //   .text("Population");
 
-          svg2.append("text")
+          svg.append("text")
             .attr("x", w - 80)
             .attr("y", h - 2)
             .text("county");
 
+        });
+      </script>
+    </section>
+
+    <section id="map">
+      <script>
+        var width = 1000;
+        var height = 600;
 
 
+        var margin = {
+          top: 60,
+          right: 80,
+          bottom: 60,
+          left: 60
+        };
 
-        var svg3 = d3.select("body")
+        var svg = d3.select("body")
           .append("svg")
-          .attr("width", w)
-          .attr("height", h)
+          .attr("width", width)
+          .attr("height", height)
           .append("g")
           .attr("tranform", "translate(0" + margin.left + "," + margin.top + ")");
 
-
+        d3.json("data/pop2010.json").then(function(miami) {
+          d3.csv("data/Place_Pop_2010.csv").then(function(data3) {
 
 
             var miamiFeatures = miami.features
@@ -269,17 +300,17 @@
 
             var bounds = path.bounds(miami);
 
-            var scale = .95 / Math.max((bounds[1][0] - bounds[0][0]) / w,
-              (bounds[1][1] - bounds[0][1]) / h);
+            var scale = .95 / Math.max((bounds[1][0] - bounds[0][0]) / width,
+              (bounds[1][1] - bounds[0][1]) / height);
 
-            var transl = [(w - scale * (bounds[1][0] + bounds[0][0])) / 2,
-              (h - scale * (bounds[1][1] + bounds[0][1])) / 2
+            var transl = [(width - scale * (bounds[1][0] + bounds[0][0])) / 2,
+              (height - scale * (bounds[1][1] + bounds[0][1])) / 2
             ];
 
             projection.scale(scale).translate(transl);
 
 
-            var map = svg3.selectAll("path")
+            var map = svg.selectAll("path")
               .data(miamiFeatures)
               .enter()
               .append("path")
@@ -317,8 +348,6 @@
                 d3.select(".tooltip").classed("hidden", true);
               });
           })
-            })
-                })
 
         });
       </script>
