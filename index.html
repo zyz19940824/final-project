@@ -39,6 +39,18 @@
     <section id="linechart">
 
       <script>
+      
+      var w = 1000;
+      var h = 600;
+
+
+      var margin = {
+        top: 60,
+        right: 80,
+        bottom: 60,
+        left: 60
+      };
+
         d3.csv("data/pop_1840-2010.csv").then(function(data1) {
 
           data1.forEach(function(d) {
@@ -46,16 +58,6 @@
             d.Population = +d.Population;
           });
 
-          var w = 1000;
-          var h = 600;
-
-
-          var margin = {
-            top: 60,
-            right: 80,
-            bottom: 60,
-            left: 60
-          };
 
           var svg = d3.select("body").append("svg");
 
